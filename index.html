@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+	<script   src="https://code.jquery.com/jquery-3.1.0.js"   integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="   crossorigin="anonymous"></script>
+
+	<style type="text/css">
+
+		input {
+		}
+
+	</style>
+
+</head>
+<body>
+
+	<form>
+		<input type="number" id="num1"/>
+		<input type="number" id="num2"/>
+		<input type="number" id="num3"/>
+		<input type="number" id="num4"/>
+	<!-- New location of form close and things now work as expected...Why does this matter?!?! :) -->
+	</form>
+		<button id="play">Buy ticket</button>
+	<!-- </form> Old location of form close when things didn't work as I expected-->
+
+	<button id="button">button</button>
+
+	<div>
+		<div id="lottery1"></div>
+		<div id="lottery2"></div>
+		<div id="lottery3"></div>
+		<div id="lottery4"></div>
+	</div>
+
+	<script>
+
+		var playerfund = 10;
+
+		// main function
+		function buyTicket() {
+			console.log("test");
+			if (sufficientFunds(playerfund)) {
+				playerfund -= 2;
+			} else {
+				return;
+			}
+		}
+
+		// sufficient funds
+		function sufficientFunds(funds) {
+			if (funds >= 2) {
+				console.log(funds);
+				return true;
+			}
+			alert("Insufficient funds to purchase a lottery ticket");
+			return false;
+		}
+
+		// turn response string into array of numbers
+		function strToNumArr(data) {
+			return data.split("\n",4).map(Number);
+		}
+
+		// check an array to be a valid lottery number
+		function isValidTicket(array) {
+			for (var i = 0; i < array.length - 1; i++) {
+				if ([1,2,3,4,5,6,7,8,9,10].indexOf(array[i]) !== -1) {
+					for (var j = i + 1; j < array.length; j++) {
+						if (array[j] === array[i]) {
+							return false;
+						}
+					}
+				}
+			}
+			return true;
+		}
+
+		// scoring
+		function payout(array1, array2) {
+			var match = 0, payout = [0,4,8,40];
+			for (var i = 0; i < array1.length; i++) {
+				if (array2.indexOf(array1[i]) !== -1) {
+					match++;
+				}
+			}
+			return payout[i];
+		}
+
+// ###################################################
+
+		var sample = "initial string";
+
+		$(document).ready(function() {
+
+			$("#play").click(
+			function() {
+				$.get("https://www.random.org/integers/?num=4&min=1&max=10&col=1&base=10&format=plain&rnd=new", function(data) {
+					sample = data;
+				});
+			});
+		});
+
+		$("#button").click(function(){$("#lottery3").html(sample)});
+
+	</script>
+
+</body>
+</html>
