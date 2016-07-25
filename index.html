@@ -7,7 +7,139 @@
 
 	<style type="text/css">
 
-		input {
+		/* http://meyerweb.com/eric/tools/css/reset/ 
+		   v2.0 | 20110126
+		   License: none (public domain)
+		*/
+
+		html, body, div, span, applet, object, iframe,
+		h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+		a, abbr, acronym, address, big, cite, code,
+		del, dfn, em, img, ins, kbd, q, s, samp,
+		small, strike, strong, sub, sup, tt, var,
+		b, u, i, center,
+		dl, dt, dd, ol, ul, li,
+		fieldset, form, label, legend,
+		table, caption, tbody, tfoot, thead, tr, th, td,
+		article, aside, canvas, details, embed, 
+		figure, figcaption, footer, header, hgroup, 
+		menu, nav, output, ruby, section, summary,
+		time, mark, audio, video {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font-size: 100%;
+			font: inherit;
+			vertical-align: baseline;
+		}
+		/* HTML5 display-role reset for older browsers */
+		article, aside, details, figcaption, figure, 
+		footer, header, hgroup, menu, nav, section {
+			display: block;
+		}
+		body {
+			line-height: 1;
+		}
+		ol, ul {
+			list-style: none;
+		}
+		blockquote, q {
+			quotes: none;
+		}
+		blockquote:before, blockquote:after,
+		q:before, q:after {
+			content: '';
+			content: none;
+		}
+		table {
+			border-collapse: collapse;
+			border-spacing: 0;
+		}
+
+		button {
+			width: 10em;
+			background-color: green;
+			font-size: 1.5em;
+			padding: 1em;
+			margin: 0.5em;
+			font-weight: bold;
+			display: inline-block;
+			border-color: green;
+			border-width: 4px;
+		}
+
+		body {
+			background-color: black;
+			color: white;
+			display: flex;
+		}
+
+		:focus {
+			outline: none;
+		}
+
+		#container {
+			flex: 9;
+			margin: auto;
+			float: left;
+			text-align: center;
+		}
+
+		#leftside {
+			flex: 3;
+			position: relative;
+		}
+
+		#message {
+			margin: 2em 1em 2em;
+			position: absolute;
+			bottom: 0;
+		}
+
+		input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { 
+			-webkit-appearance: none; 
+			margin: 0; 
+}
+
+		h2 {
+			text-align: center;
+			font-size: 2em;
+			margin: 0.5em 0 0 0;
+		}
+
+		.number {
+			font-size: 3em;
+			text-align: center;
+			color: white;
+			width: 1.5em;
+			float: left;
+			padding: 0.5em;
+			margin: 0.5em;
+			border: 0.25em solid gold;
+			background-color: black;
+			font-family: Arial;
+			border-style: inset;
+		}
+
+		.cash {
+			color: green;
+			font-weight: bold;
+			font-size: 2.5em;
+			text-align: center;
+			margin: 2em 0 -1.75em 0;
+
+		}
+
+		.vertalgn {
+			vertical-align: middle;
+		}
+
+		.row{
+			display: inline-block;
+		}
+
+		.clearfloat{
+			clear: both;
 		}
 
 	</style>
@@ -15,46 +147,48 @@
 </head>
 <body>
 
-	<form>
-		<input type="number" id="num1"/>
-		<input type="number" id="num2"/>
-		<input type="number" id="num3"/>
-		<input type="number" id="num4"/>
-	<!-- New location of form close and things now work as expected...Why does this matter?!?! :) -->
-	</form>
-		<button id="play">Buy ticket</button>
-	<!-- </form> Old location of form close when things didn't work as I expected-->
+	<div id="leftside">
+		<div>
+			<div class="cash">Cash:</div>
+			<div class="cash" id="playercash">$10</div>
+			<h2 id="message"></h2>
+		</div>
+	</div>
 
-	<button id="button">button</button>
+	<div id="container">
 
-	<div>
-		<div id="lottery1"></div>
-		<div id="lottery2"></div>
-		<div id="lottery3"></div>
-		<div id="lottery4"></div>
+		<form class="row" autocomplete="off">
+			<h2>Your Numbers</h2>
+			<input autofocus class="number" type="number" id="num0"/>
+			<input class="number" type="number" id="num1"/>
+			<input class="number" type="number" id="num2"/>
+			<input class="number" type="number" id="num3"/>
+		</form>
+
+		<div class="clearfloat"></div>
+		<button id="play">Play!</button>
+
+		<div class="row">
+			<h2>Winning Numbers</h2>
+			<div class="number" id="lottery0">0</div>
+			<div class="number" id="lottery1">0</div>
+			<div class="number" id="lottery2">0</div>
+			<div class="number" id="lottery3">0</div>
+		</div>
+
+		<div class="clearfloat"></div>
+
 	</div>
 
 	<script>
 
-		var playerfund = 10;
-
-		// main function
-		function buyTicket() {
-			console.log("test");
-			if (sufficientFunds(playerfund)) {
-				playerfund -= 2;
-			} else {
-				return;
-			}
-		}
+		var playerfund = 10, shufflecount = 0;
 
 		// sufficient funds
 		function sufficientFunds(funds) {
 			if (funds >= 2) {
-				console.log(funds);
 				return true;
 			}
-			alert("Insufficient funds to purchase a lottery ticket");
 			return false;
 		}
 
@@ -63,15 +197,29 @@
 			return data.split("\n",4).map(Number);
 		}
 
+		// build ticket array
+		function buildTicketArr(num1, num2, num3, num4) {
+			var array = [];
+			array.push(num1);
+			array.push(num2);
+			array.push(num3);
+			array.push(num4);
+			return array;
+		}
+
 		// check an array to be a valid lottery number
 		function isValidTicket(array) {
 			for (var i = 0; i < array.length - 1; i++) {
 				if ([1,2,3,4,5,6,7,8,9,10].indexOf(array[i]) !== -1) {
 					for (var j = i + 1; j < array.length; j++) {
 						if (array[j] === array[i]) {
+							$("#num" + i).css({"outline":"0.25em outset red"});
 							return false;
 						}
 					}
+				} else {
+					$("#num" + i).css({"outline":"0.25em outset red"});
+					return false;
 				}
 			}
 			return true;
@@ -79,30 +227,102 @@
 
 		// scoring
 		function payout(array1, array2) {
-			var match = 0, payout = [0,4,8,40];
+			var match = 0, payout = [0,0,4,8,40];
 			for (var i = 0; i < array1.length; i++) {
 				if (array2.indexOf(array1[i]) !== -1) {
+					$("#num" + i).css({"outline":"0.25em outset green"});
 					match++;
 				}
 			}
-			return payout[i];
+			return payout[match];
 		}
 
-// ###################################################
+		// shuffle numbers
+		function shuffleNumber(callback, ticket, lottery) {
+			var timer = setInterval(function() {
+				for (var i = 0; i < lottery.length; i++) {
+					$("#lottery" + i).html(Math.ceil(Math.random() * 10));
+				}
+				if (shufflecount++ > 20) {
+					callback(ticket, lottery);
+					clearInterval(timer);
+				}
+			}, 100);
+		}
 
-		var sample = "initial string";
+
+		// display winning numbers
+		function displayLottery(ticket, lottery) {
+			for (var i = 0; i < lottery.length; i++) {
+				$("#lottery" + i).html(lottery[i]);
+			}
+			outcome(ticket, lottery);
+		}
+
+		function outcome(ticket, lottery) {
+			var winnings = payout(ticket, lottery);
+			if (winnings === 0) {
+				$("#message").css({"color": "white", "font-weight": "normal"});
+				$("#message").html("Sorry, you did not match 2 or more numbers.");
+			} else {
+				$("#message").css({"color": "gold", "font-weight": "bold"});
+				$("#message").html("Congratulations! You won $" + winnings + "!");
+				playerfund += winnings;
+				$("#playercash").html("$" + playerfund);
+			}
+			return;
+		}
+
+// ########
 
 		$(document).ready(function() {
 
-			$("#play").click(
-			function() {
-				$.get("https://www.random.org/integers/?num=4&min=1&max=10&col=1&base=10&format=plain&rnd=new", function(data) {
-					sample = data;
-				});
-			});
-		});
+			$("#play").click(main);
 
-		$("#button").click(function(){$("#lottery3").html(sample)});
+			function main() {
+				$.get("https://www.random.org/integers/?num=4&min=1&max=10&col=1&base=10&format=plain&rnd=new", function(data) {
+					$("#message").html("");
+					for (var i = 0; i < 4; i++) {
+						$("#num" + i).css({"outline": "none"});
+					}
+					var lottery = data;
+					lottery = strToNumArr(lottery);
+
+					var t1 = parseFloat(document.getElementById("num0").value);
+					var t2 = parseFloat(document.getElementById("num1").value);
+					var t3 = parseFloat(document.getElementById("num2").value);
+					var t4 = parseFloat(document.getElementById("num3").value);
+					var ticket = buildTicketArr(t1, t2, t3, t4);
+
+					if (!isValidTicket(lottery)) {
+						for (i = 0; i < lottery.length; i++) {
+							$("#num" + i).css({"outline":"none"});
+						}
+						main();
+						return;
+					}
+
+					if (isValidTicket(ticket)) {
+						if (sufficientFunds(playerfund)) {
+							playerfund -= 2;
+							$("#playercash").html("$" + playerfund);
+						} else {
+							$("#message").css({"color": "red", "font-weight": "normal"});
+							$("#message").html("Insufficient funds to purchase a lottery ticket.");
+							return;
+						}
+					} else {
+						$("#message").css({"color": "red", "font-weight": "normal"});
+						$("#message").html("You have not entered a valid ticket number.\nAll 4 numbers must be 1-10 and different from each other.");
+						return;
+					}
+
+					shufflecount = 0;
+					shuffleNumber(displayLottery, ticket, lottery);
+
+				});
+			}
+		});
 
 	</script>
 
