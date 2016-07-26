@@ -83,17 +83,17 @@
 			margin: auto;
 			float: left;
 			text-align: center;
+			max-width: 960px;
 		}
 
 		#leftside {
 			flex: 3;
 			position: relative;
+			max-width: 40%;
 		}
 
 		#message {
-			margin: 2em 1em 2em;
-			position: absolute;
-			bottom: 0;
+			margin: 5em 1em 2em;
 		}
 
 		input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { 
@@ -130,8 +130,9 @@
 
 		}
 
-		.vertalgn {
-			vertical-align: middle;
+		.instructions {
+			font-size: 1.25em;
+			margin: 0.5em;
 		}
 
 		.row{
@@ -140,6 +141,20 @@
 
 		.clearfloat{
 			clear: both;
+		}
+
+		@media (max-width: 1066px) {
+
+			#container {
+				max-width: 384px;
+				min-width: 384px;
+			}
+
+			#leftside {
+				min-width: 250px;
+				max-width: 50%;
+			}
+
 		}
 
 	</style>
@@ -177,6 +192,7 @@
 		</div>
 
 		<div class="clearfloat"></div>
+		<div class="instructions">Enter 4 different numbers from 1 to 10. You win if you match 2 or more winning numbers!</div>
 
 	</div>
 
@@ -250,7 +266,6 @@
 			}, 100);
 		}
 
-
 		// display winning numbers
 		function displayLottery(ticket, lottery) {
 			for (var i = 0; i < lottery.length; i++) {
@@ -273,7 +288,7 @@
 			return;
 		}
 
-// ########
+		// Main function
 
 		$(document).ready(function() {
 
