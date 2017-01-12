@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>Lottery Sim</title>
 
 	<script   src="https://code.jquery.com/jquery-3.1.0.js"   integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="   crossorigin="anonymous"></script>
 
 	<style type="text/css">
 
-		/* http://meyerweb.com/eric/tools/css/reset/ 
+		/* http://meyerweb.com/eric/tools/css/reset/
 		   v2.0 | 20110126
 		   License: none (public domain)
 		*/
@@ -21,8 +21,8 @@
 		dl, dt, dd, ol, ul, li,
 		fieldset, form, label, legend,
 		table, caption, tbody, tfoot, thead, tr, th, td,
-		article, aside, canvas, details, embed, 
-		figure, figcaption, footer, header, hgroup, 
+		article, aside, canvas, details, embed,
+		figure, figcaption, footer, header, hgroup,
 		menu, nav, output, ruby, section, summary,
 		time, mark, audio, video {
 			margin: 0;
@@ -32,8 +32,7 @@
 			font: inherit;
 			vertical-align: baseline;
 		}
-		/* HTML5 display-role reset for older browsers */
-		article, aside, details, figcaption, figure, 
+		article, aside, details, figcaption, figure,
 		footer, header, hgroup, menu, nav, section {
 			display: block;
 		}
@@ -96,9 +95,9 @@
 			margin: 5em 1em 2em;
 		}
 
-		input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { 
-			-webkit-appearance: none; 
-			margin: 0; 
+		input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
 }
 
 		h2 {
@@ -198,9 +197,9 @@
 
 	<script>
 
-		var playerfund = 10, shufflecount = 0;
+		var playerFunds = 10, shuffleCount = 0, running = false;
 
-		// sufficient funds
+		// does player have sufficient funds to purchase a ticket
 		function sufficientFunds(funds) {
 			if (funds >= 2) {
 				return true;
@@ -259,7 +258,7 @@
 				for (var i = 0; i < lottery.length; i++) {
 					$("#lottery" + i).html(Math.ceil(Math.random() * 10));
 				}
-				if (shufflecount++ > 20) {
+				if (shuffleCount++ > 20) {
 					callback(ticket, lottery);
 					clearInterval(timer);
 				}
@@ -282,9 +281,10 @@
 			} else {
 				$("#message").css({"color": "gold", "font-weight": "bold"});
 				$("#message").html("Congratulations! You won $" + winnings + "!");
-				playerfund += winnings;
-				$("#playercash").html("$" + playerfund);
+				playerFunds += winnings;
+				$("#playercash").html("$" + playerFunds);
 			}
+			running = false;
 			return;
 		}
 
@@ -295,6 +295,11 @@
 			$("#play").click(main);
 
 			function main() {
+				if (running === true) {
+					return;
+				} else {
+					running = true;
+				}
 				$.get("https://www.random.org/integers/?num=4&min=1&max=10&col=1&base=10&format=plain&rnd=new", function(data) {
 					$("#message").html("");
 					for (var i = 0; i < 4; i++) {
@@ -313,26 +318,29 @@
 						for (i = 0; i < lottery.length; i++) {
 							$("#num" + i).css({"outline":"none"});
 						}
+						running = false;
 						main();
 						return;
 					}
 
 					if (isValidTicket(ticket)) {
-						if (sufficientFunds(playerfund)) {
-							playerfund -= 2;
-							$("#playercash").html("$" + playerfund);
+						if (sufficientFunds(playerFunds)) {
+							playerFunds -= 2;
+							$("#playercash").html("$" + playerFunds);
 						} else {
 							$("#message").css({"color": "red", "font-weight": "normal"});
 							$("#message").html("Insufficient funds to purchase a lottery ticket.");
+							running = false;
 							return;
 						}
 					} else {
 						$("#message").css({"color": "red", "font-weight": "normal"});
 						$("#message").html("You have not entered a valid ticket number.\nAll 4 numbers must be 1-10 and different from each other.");
+						running = false;
 						return;
 					}
 
-					shufflecount = 0;
+					shuffleCount = 0;
 					shuffleNumber(displayLottery, ticket, lottery);
 
 				});
